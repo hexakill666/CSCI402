@@ -1,0 +1,164 @@
++-----------------+--------------------------+----------------+----------------+
+|       Date      | Description              |         Amount |        Balance |
++-----------------+--------------------------+----------------+----------------+
+| Wed Jan 23 2008 | Interest                 |      3,778.38  |      3,778.38  |
+| Tue Feb  5 2008 | Rent                     | (    4,061.22) | (      282.84) |
+| Fri Apr 11 2008 | Bonus                    |        499.72  |        216.88  |
+| Fri May 23 2008 | Interest                 |        157.88  |        374.76  |
+| Sat May 31 2008 | Bonus                    |      2,386.95  |      2,761.71  |
+| Fri Jun  6 2008 | Grocery                  | (    1,458.64) |      1,303.07  |
+| Thu Jul  3 2008 | Interest                 |      3,566.00  |      4,869.07  |
+| Sun Jul 13 2008 | Bonus                    |      6,425.09  |     11,294.16  |
+| Tue Jul 15 2008 | Paycheck                 |      6,209.24  |     17,503.40  |
+| Sat Sep 20 2008 | Cable TV                 | (    1,717.44) |     15,785.96  |
+| Fri Sep 26 2008 | Paycheck                 |      2,626.62  |     18,412.58  |
+| Sat Nov  8 2008 | Rent                     | (    4,157.62) |     14,254.96  |
+| Sun Dec 21 2008 | Interest                 |        983.58  |     15,238.54  |
+| Thu Jan 22 2009 | Interest                 |      1,730.72  |     16,969.26  |
+| Thu Jan 22 2009 | Cable TV                 | (    3,089.44) |     13,879.82  |
+| Fri Mar  6 2009 | Grocery                  | (    3,824.84) |     10,054.98  |
+| Wed Mar 11 2009 | Gasoline                 | (      855.92) |      9,199.06  |
+| Sun Mar 29 2009 | Grocery                  | (      607.51) |      8,591.55  |
+| Wed May 13 2009 | Department of water & po | (    4,735.15) |      3,856.40  |
+| Fri May 29 2009 | Royalty check            |      2,392.58  |      6,248.98  |
+| Sat Jun 27 2009 | Paycheck                 |         68.54  |      6,317.52  |
+| Fri Jul  3 2009 | Grocery                  | (    1,370.31) |      4,947.21  |
+| Fri Jul 24 2009 | Rent                     | (    4,703.44) |        243.77  |
+| Sat Jul 25 2009 | Gasoline                 | (    3,852.11) | (    3,608.34) |
+| Thu Aug 13 2009 | Phone bill               | (    1,568.04) | (    5,176.38) |
+| Wed Sep  2 2009 | Paycheck                 |      3,558.78  | (    1,617.60) |
+| Fri Sep  4 2009 | Grocery                  | (    4,495.36) | (    6,112.96) |
+| Mon Sep 14 2009 | Interest                 |      5,327.74  | (      785.22) |
+| Tue Nov  3 2009 | Gas company              | (    2,750.73) | (    3,535.95) |
+| Thu Nov 12 2009 | Royalty check            |      5,416.33  |      1,880.38  |
+| Mon Dec 14 2009 | Interest                 |      3,201.65  |      5,082.03  |
+| Fri Dec 25 2009 | Rent                     | (    2,408.02) |      2,674.01  |
+| Tue Feb  2 2010 | Interest                 |      1,743.16  |      4,417.17  |
+| Wed Feb  3 2010 | Bonus                    |      6,250.14  |     10,667.31  |
+| Sun Feb  7 2010 | Gas company              | (    5,350.39) |      5,316.92  |
+| Wed Feb 10 2010 | Phone bill               | (       32.44) |      5,284.48  |
+| Sun Feb 21 2010 | Grocery                  | (    4,112.50) |      1,171.98  |
+| Wed Mar 24 2010 | Royalty check            |      5,974.28  |      7,146.26  |
+| Fri Apr 30 2010 | Phone bill               | (    2,317.54) |      4,828.72  |
+| Sun Jun 13 2010 | Cable TV                 | (    3,455.91) |      1,372.81  |
+| Sun Jul  4 2010 | Paycheck                 |        416.74  |      1,789.55  |
+| Sat Aug 14 2010 | Bonus                    |      1,579.02  |      3,368.57  |
+| Sun Aug 22 2010 | Rent                     | (    3,116.31) |        252.26  |
+| Thu Sep  9 2010 | Interest                 |      2,817.69  |      3,069.95  |
+| Sun Nov 14 2010 | Paycheck                 |      6,085.68  |      9,155.63  |
+| Sat Nov 27 2010 | Bonus                    |        380.51  |      9,536.14  |
+| Mon Jan 24 2011 | Cable TV                 | (    3,800.44) |      5,735.70  |
+| Sun Feb 13 2011 | Bonus                    |      5,695.83  |     11,431.53  |
+| Sun Feb 20 2011 | Paycheck                 |        499.83  |     11,931.36  |
+| Mon Feb 21 2011 | Gas company              | (    1,193.52) |     10,737.84  |
+| Wed Mar  2 2011 | Bonus                    |      1,810.88  |     12,548.72  |
+| Sat Apr  2 2011 | Gas company              | (    5,731.45) |      6,817.27  |
+| Thu Apr 21 2011 | Bonus                    |      6,455.66  |     13,272.93  |
+| Sun May 15 2011 | Interest                 |      4,292.30  |     17,565.23  |
+| Fri Jun  3 2011 | Interest                 |      4,953.53  |     22,518.76  |
+| Sat Jun 25 2011 | Paycheck                 |      3,987.38  |     26,506.14  |
+| Sun Jul 31 2011 | Royalty check            |      1,015.18  |     27,521.32  |
+| Wed Nov  9 2011 | Gas company              | (    2,547.14) |     24,974.18  |
+| Tue Nov 15 2011 | Grocery                  | (    2,519.39) |     22,454.79  |
+| Sun Dec  4 2011 | Interest                 |      2,609.16  |     25,063.95  |
+| Tue Dec 27 2011 | Interest                 |      6,090.04  |     31,153.99  |
+| Sat Feb 18 2012 | Bonus                    |         80.17  |     31,234.16  |
+| Wed Feb 22 2012 | Gas company              | (    1,464.70) |     29,769.46  |
+| Fri Mar  2 2012 | Department of water & po | (    2,939.30) |     26,830.16  |
+| Tue Mar 13 2012 | Royalty check            |      5,743.23  |     32,573.39  |
+| Mon Apr 23 2012 | Interest                 |      3,074.27  |     35,647.66  |
+| Wed Jun 27 2012 | Paycheck                 |      3,619.96  |     39,267.62  |
+| Wed Jul 25 2012 | Department of water & po | (    2,348.06) |     36,919.56  |
+| Sat Aug 11 2012 | Paycheck                 |        228.46  |     37,148.02  |
+| Sun Aug 19 2012 | Paycheck                 |      3,169.01  |     40,317.03  |
+| Wed Sep  5 2012 | Royalty check            |      1,574.18  |     41,891.21  |
+| Sat Sep  8 2012 | Rent                     | (    2,064.48) |     39,826.73  |
+| Sat Oct 20 2012 | Royalty check            |         54.99  |     39,881.72  |
+| Wed Nov  7 2012 | Paycheck                 |      4,704.13  |     44,585.85  |
+| Fri Nov 23 2012 | Bonus                    |      6,088.87  |     50,674.72  |
+| Tue Nov 27 2012 | Bonus                    |      3,928.00  |     54,602.72  |
+| Sun Dec  2 2012 | Phone bill               | (      788.82) |     53,813.90  |
+| Tue Dec 25 2012 | Paycheck                 |      3,908.89  |     57,722.79  |
+| Wed Dec 26 2012 | Department of water & po | (    2,236.72) |     55,486.07  |
+| Tue Mar 12 2013 | Royalty check            |      5,337.63  |     60,823.70  |
+| Thu Apr 25 2013 | Gas company              | (    3,024.43) |     57,799.27  |
+| Tue May 14 2013 | Department of water & po | (    5,123.77) |     52,675.50  |
+| Fri Jun 21 2013 | Paycheck                 |      3,806.95  |     56,482.45  |
+| Sat Jun 22 2013 | Bonus                    |      2,612.17  |     59,094.62  |
+| Sat Jul  6 2013 | Rent                     | (    6,403.57) |     52,691.05  |
+| Fri Aug  2 2013 | Bonus                    |      5,526.96  |     58,218.01  |
+| Fri Aug 16 2013 | Royalty check            |        314.60  |     58,532.61  |
+| Wed Aug 21 2013 | Royalty check            |      1,996.18  |     60,528.79  |
+| Wed Sep 11 2013 | Royalty check            |      5,374.93  |     65,903.72  |
+| Tue Oct  8 2013 | Department of water & po | (    2,337.71) |     63,566.01  |
+| Mon Oct 14 2013 | Interest                 |      3,848.46  |     67,414.47  |
+| Sat Nov 23 2013 | Grocery                  | (    2,993.90) |     64,420.57  |
+| Mon Nov 25 2013 | Paycheck                 |      2,847.15  |     67,267.72  |
+| Fri Nov 29 2013 | Bonus                    |      4,799.81  |     72,067.53  |
+| Tue Jan  7 2014 | Royalty check            |      4,304.32  |     76,371.85  |
+| Sun Jan 12 2014 | Gasoline                 | (    3,806.55) |     72,565.30  |
+| Wed Mar  5 2014 | Grocery                  | (       39.33) |     72,525.97  |
+| Thu Apr  3 2014 | Bonus                    |      2,136.79  |     74,662.76  |
+| Wed Apr  9 2014 | Royalty check            |      1,764.92  |     76,427.68  |
+| Fri May  2 2014 | Interest                 |      2,010.42  |     78,438.10  |
+| Mon May  5 2014 | Paycheck                 |      5,220.73  |     83,658.83  |
+| Sat May 24 2014 | Paycheck                 |      4,847.21  |     88,506.04  |
+| Tue May 27 2014 | Interest                 |      2,456.98  |     90,963.02  |
+| Wed May 28 2014 | Royalty check            |      2,888.90  |     93,851.92  |
+| Mon Aug  4 2014 | Bonus                    |      4,101.40  |     97,953.32  |
+| Sun Aug 17 2014 | Interest                 |        375.99  |     98,329.31  |
+| Tue Aug 26 2014 | Rent                     | (    2,477.82) |     95,851.49  |
+| Mon Sep 29 2014 | Royalty check            |      5,209.67  |    101,061.16  |
+| Wed Oct 29 2014 | Cable TV                 | (      534.18) |    100,526.98  |
+| Tue Apr 21 2015 | Interest                 |      6,133.29  |    106,660.27  |
+| Thu May 14 2015 | Cable TV                 | (    4,478.18) |    102,182.09  |
+| Mon Jun 22 2015 | Gasoline                 | (    4,316.11) |     97,865.98  |
+| Tue Jun 30 2015 | Royalty check            |      1,166.95  |     99,032.93  |
+| Tue Jul 14 2015 | Rent                     | (      336.18) |     98,696.75  |
+| Tue Sep 22 2015 | Bonus                    |      4,194.26  |    102,891.01  |
+| Tue Oct  6 2015 | Bonus                    |      1,489.38  |    104,380.39  |
+| Wed Oct  7 2015 | Royalty check            |      3,037.87  |    107,418.26  |
+| Wed Oct 21 2015 | Royalty check            |      5,813.63  |    113,231.89  |
+| Mon Nov  9 2015 | Paycheck                 |      1,391.82  |    114,623.71  |
+| Sat Dec 12 2015 | Department of water & po | (    1,154.37) |    113,469.34  |
+| Thu Jan 14 2016 | Gasoline                 | (    4,660.77) |    108,808.57  |
+| Sun Jan 24 2016 | Rent                     | (    2,119.07) |    106,689.50  |
+| Fri Apr  1 2016 | Phone bill               | (      305.96) |    106,383.54  |
+| Sun May  1 2016 | Interest                 |      2,693.66  |    109,077.20  |
+| Wed Jun 22 2016 | Paycheck                 |      2,165.63  |    111,242.83  |
+| Tue Jul  5 2016 | Bonus                    |      1,033.05  |    112,275.88  |
+| Mon Jul 25 2016 | Paycheck                 |      1,944.45  |    114,220.33  |
+| Sat Sep 10 2016 | Phone bill               | (    5,349.87) |    108,870.46  |
+| Mon Oct 31 2016 | Bonus                    |      3,088.81  |    111,959.27  |
+| Thu Nov 17 2016 | Bonus                    |      3,886.72  |    115,845.99  |
+| Sat Dec  3 2016 | Rent                     | (    4,602.37) |    111,243.62  |
+| Wed Dec 28 2016 | Gasoline                 | (      624.72) |    110,618.90  |
+| Fri Dec 30 2016 | Gas company              | (      967.29) |    109,651.61  |
+| Tue Jan 31 2017 | Department of water & po | (    1,455.34) |    108,196.27  |
+| Wed Mar 22 2017 | Grocery                  | (    5,107.32) |    103,088.95  |
+| Wed Apr 12 2017 | Royalty check            |      5,946.37  |    109,035.32  |
+| Sat Apr 15 2017 | Interest                 |      4,366.74  |    113,402.06  |
+| Sat Apr 29 2017 | Royalty check            |      1,620.22  |    115,022.28  |
+| Tue May  9 2017 | Interest                 |      2,314.90  |    117,337.18  |
+| Sun Jun  4 2017 | Royalty check            |      5,304.24  |    122,641.42  |
+| Tue Jul  4 2017 | Department of water & po | (    2,027.58) |    120,613.84  |
+| Thu Sep 28 2017 | Paycheck                 |      1,470.13  |    122,083.97  |
+| Mon Nov  6 2017 | Cable TV                 | (    6,019.54) |    116,064.43  |
+| Wed Nov 29 2017 | Bonus                    |      4,753.80  |    120,818.23  |
+| Mon Feb 12 2018 | Interest                 |      1,013.85  |    121,832.08  |
+| Fri Mar 16 2018 | Interest                 |      6,052.50  |    127,884.58  |
+| Mon Apr 16 2018 | Interest                 |        482.06  |    128,366.64  |
+| Sun Sep  2 2018 | Paycheck                 |      5,546.77  |    133,913.41  |
+| Mon Oct  8 2018 | Interest                 |      2,857.00  |    136,770.41  |
+| Mon Oct 29 2018 | Royalty check            |      1,382.16  |    138,152.57  |
+| Wed Oct 31 2018 | Interest                 |      2,466.96  |    140,619.53  |
+| Sat Nov  3 2018 | Cable TV                 | (    5,940.41) |    134,679.12  |
+| Sat Nov 10 2018 | Gas company              | (    4,037.74) |    130,641.38  |
+| Sat Nov 17 2018 | Department of water & po | (    4,714.40) |    125,926.98  |
+| Sun Dec  2 2018 | Paycheck                 |      2,416.73  |    128,343.71  |
+| Mon Jan 14 2019 | Department of water & po | (      163.39) |    128,180.32  |
+| Wed Jan 23 2019 | Bonus                    |      5,056.73  |    133,237.05  |
+| Sun Feb  3 2019 | Interest                 |      5,828.84  |    139,065.89  |
+| Sat May  4 2019 | Interest                 |      3,774.58  |    142,840.47  |
+| Wed May 15 2019 | Gas company              | (    2,950.39) |    139,890.08  |
++-----------------+--------------------------+----------------+----------------+

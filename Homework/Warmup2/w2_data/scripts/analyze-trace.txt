@@ -1,0 +1,552 @@
+#!/usr/bin/perl
+#
+# @(#)$Id: analyze-trace.txt,v 1.4 2020/09/08 20:44:48 cvsps Exp $
+#
+# This is a warmup2 utility program.  Do this first:
+#     chmod 755 ./analyze-trace.txt
+#
+# This program only works on good trace.  It will produce bad printout of the trace is incorrect.
+#     If your trace printout cannot be handled by this program, you should fix your code!
+# This program will not work with a partial trace (i.e., <Cntrl+C> pressed).
+#
+#     ./warmup2 -n 4 -r 7 -B 7 -P 5 -lambda 3.333 -mu 8.5 > x.out
+#     ./analyze-trace.txt -n 4 -r 7 -B 7 -P 5 -lambda 3.333 -mu 8.5 x.out
+#
+#     ./warmup2 -mu 0.85 -r 0.5 -P 5 -lambda 33.33 -B 7 -n 4 > x.out
+#     ./analyze-trace.txt -mu 0.85 -r 0.5 -P 5 -lambda 33.33 -B 7 -n 4 x.out
+#
+#     ./warmup2 -B 3 -t w2data/f0.txt > x.out
+#     ./analyze-trace.txt -B 3 -t w2data/f0.txt x.out
+#
+#     ./warmup2 -t w2data/f1.txt -B 2 > x.out
+#     ./analyze-trace.txt -t w2data/f1.txt -B 2 x.out
+#
+#     ./warmup2 -B 1 -t w2data/f2.txt > x.out
+#     ./analyze-trace.txt -B 1 -t w2data/f2.txt x.out
+#
+#     ./warmup2 -t w2data/f3.txt > x.out
+#     ./analyze-trace.txt -t w2data/f3.txt x.out
+#
+#     ./warmup2 -r 5 -B 2 -t w2data/f4.txt > x.out
+#     ./analyze-trace.txt -r 5 -B 2 -t w2data/f4.txt x.out
+#
+#     ./warmup2 -B 2 -t w2data/f5.txt -r 15 > x.out
+#     ./analyze-trace.txt -B 2 -t w2data/f5.txt -r 15 x.out
+#
+#     ./warmup2 -t w2data/f6.txt -r 25 -B 2 > x.out
+#     ./analyze-trace.txt -t w2data/f6.txt -r 25 -B 2 x.out
+#
+#     ./warmup2 -t w2data/f7.txt -B 1 -r 5 > x.out
+#     ./analyze-trace.txt -t w2data/f7.txt -B 1 -r 5 x.out
+
+sub TimeStampDiffInDouble {
+    local(@args) = @_;
+    ($t1, $t2) = @args;
+    # t1 must be earlier than t2
+    ($key, $val) = split("[.]", $t1);
+    ($t1_msec, $t1_usec) = split("[.]", $t1);
+    ($t2_msec, $t2_usec) = split("[.]", $t2);
+    if ($t2_usec >= $t1_usec) {
+        # no need to borrow
+        $usec = $t2_usec - $t1_usec;
+        $msec = $t2_msec - $t1_msec;
+    } else {
+        # borrow 1 millisecond as 1000 microseconds
+        $usec = 1000 + $t2_usec - $t1_usec;
+        $msec = $t2_msec - 1 - $t1_msec;
+    }
+    return ($msec / 1000.0) + ($usec / 1000000.0);
+}
+
+sub TimeStampDiffInMS {
+    local(@args) = @_;
+    ($t1, $t2) = @args;
+    # t1 must be earlier than t2
+    ($key, $val) = split("[.]", $t1);
+    ($t1_msec, $t1_usec) = split("[.]", $t1);
+    ($t2_msec, $t2_usec) = split("[.]", $t2);
+    if ($t2_usec >= $t1_usec) {
+        # no need to borrow
+        $usec = $t2_usec - $t1_usec;
+        $msec = $t2_msec - $t1_msec;
+    } else {
+        # borrow 1 millisecond as 1000 microseconds
+        $usec = 1000 + $t2_usec - $t1_usec;
+        $msec = $t2_msec - 1 - $t1_msec;
+    }
+    $q = int($usec / 1000) + int($msec);
+    $r = int($usec % 1000);
+    return sprintf("%d.%03dms", $q, $r);
+}
+
+sub NegativeTimeStampDiff {
+    local(@args) = @_;
+    ($t1, $t2) = @args;
+    # t1 must be earlier than t2
+    ($key, $val) = split("[.]", $t1);
+    ($t1_msec, $t1_usec) = split("[.]", $t1);
+    ($t2_msec, $t2_usec) = split("[.]", $t2);
+    if ($t2_usec >= $t1_usec) {
+        # no need to borrow
+        $usec = $t2_usec - $t1_usec;
+        $msec = $t2_msec - $t1_msec;
+    } else {
+        # borrow 1 millisecond as 1000 microseconds
+        $usec = 1000 + $t2_usec - $t1_usec;
+        $msec = $t2_msec - 1 - $t1_msec;
+    }
+    $q = int($usec / 1000) + int($msec);
+    if ($q < 0) {
+        return 1;
+    }
+    return 0;
+}
+
+sub ServiceTimeToMS {
+    local($st) = @_;
+
+    return sprintf("%dms", $st);
+}
+
+sub MyRound {
+    local($dval) = @_;
+
+    if ($dval >= 0) {
+        return int($dval+0.5);
+    } else {
+        return int($dval-0.5);
+    }
+}
+
+$M = 2;
+$trace_driven = 0;
+@packet = ( );
+
+$B = 10;
+$r = 1.5;
+
+$lambda = 1.0;
+$mu = 0.35;
+$P = 3;
+$num_packets = 20;
+
+$tracefile = "";
+$infile = "";
+
+$debug = 0;
+
+$argc = $#ARGV+1;
+
+for ($i=0; $i < $argc; $i++) {
+    if ($ARGV[$i] eq "-lambda") {
+        $i++;
+        $lambda = 1.0 * $ARGV[$i];
+    } elsif ($ARGV[$i] eq "-mu") {
+        $i++;
+        $mu = 1.0 * $ARGV[$i];
+    } elsif ($ARGV[$i] eq "-r") {
+        $i++;
+        $r = 1.0 * $ARGV[$i];
+    } elsif ($ARGV[$i] eq "-B") {
+        $i++;
+        $B = int($ARGV[$i]);
+    } elsif ($ARGV[$i] eq "-P") {
+        $i++;
+        $P = int($ARGV[$i]);
+    } elsif ($ARGV[$i] eq "-n") {
+        $i++;
+        $num_packets = int($ARGV[$i]);
+    } elsif ($ARGV[$i] eq "-t") {
+        $i++;
+        $trace_driven = 1;
+        $tracefile = $ARGV[$i];
+    } else {
+        $infile = $ARGV[$i];
+    }
+}
+
+if ($trace_driven && $tracefile eq "") {
+    print STDERR "Malformed command.\n";
+    print STDERR "usage: analyze-trace.txt [-lambda lambda] [-mu mu] [-r r] [-B B] [-P P] [-n num] [-t tsfile] INPUTFILE\n";
+    exit(-1);
+} elsif ($infile eq "") {
+    print STDERR "Malformed command.\n";
+    print STDERR "usage: analyze-trace.txt [-lambda lambda] [-mu mu] [-r r] [-B B] [-P P] [-n num] [-t tsfile] INPUTFILE\n";
+    exit(-1);
+}
+
+if ($trace_driven) {
+    $idx = 0;
+    $first_line = 1;
+    open FILE, "<$tracefile" or die "Cannot opoen $tracefile for reading!\n";
+    while ($line = <FILE>) {
+        chop($line);
+        if ($first_line) {
+            $num_packets = int($line);
+            $first_line = 0;
+        } else {
+            $packet[$idx++] = $line;
+        }
+    }
+    close FILE;
+    if ($idx != $num_packets) {
+        print STDERR "Wrong number of packets in tracefile.  Abort!\n";
+        exit(-1);
+    }
+    if ($debug) {
+        print "====  Trace-drive Mode ====\n";
+        print "r = $r, B = $B, n = $num_packets, tsfile = $tracefile\n";
+        print "====  $tracefile ====\n";
+    }
+    for ($i = 0; $i < $num_packets; $i++) {
+        $j = $i + 1;
+        ($iat, $tokens, $st) = split(" ", $packet[$i]);
+        if ($debug) {
+            print "p$j: $iat, $tokens, $st\n";
+        }
+    }
+} else {
+    if ($debug) {
+        print "====  Deterministic Mode ====\n";
+        print "lambda = $lambda, mu = $mu, r = $r, B = $B, P = $P, n = $num_packets\n";
+    }
+    $iat = 1.0 / $lambda;
+    $st = 1.0 / $mu;
+    for ($i = 0; $i < $num_packets; $i++) {
+        $packet[$i] = $iat . " " . $P . " " . $st;
+        if ($debug) {
+            print "p$j: $iat, $P, $st\n";
+        }
+    }
+}
+
+@packet_info = ( );
+@packet_info_idx = ( );
+@packet_transmitted_by_sender = ( );
+for ($i = 0; $i < $num_packets; $i++) {
+    $packet_info[$i] = ( );
+    $packet_info_idx[$i] = 0;
+    $packet_transmitted_by_sender[$i] = (-2);
+}
+$token_dropped = 0;
+$token_not_dropped = 0;
+
+if ($debug) {
+    print "\n====  Processing $infile ====\n";
+}
+$emulation_end_time = "(UNDEFINED)";
+$prev_packet_number = 0;
+$prev_packet_arrival_ts = 0;
+open FILE, "<$infile" or die "Cannot opoen $infile for reading!\n";
+while ($line = <FILE>) {
+    chop($line);
+    ($ts, $desc) = split(": ", $line);
+    ($first, $second) = split(" ", $desc);
+    if ($first eq "token") {
+        $k = index($desc, "dropped");
+        if ($k == (-1)) {
+            $token_not_dropped++;
+        } else {
+            $token_dropped++;
+        }
+    } elsif ($first eq "emulation") {
+        if ($second eq "ends") {
+            $emulation_end_time = $ts;
+        }
+    } elsif (substr($first,0,1) eq "p") {
+        $packet_number = substr($first, 1);
+        $packet_idx = $packet_number - 1;
+
+        $event_idx = $packet_info_idx[$packet_idx];
+        @new_list = ( );
+        for ($k = 0; $k < $event_idx; $k++) {
+            $new_list[$k] = $packet_info[$packet_idx][$k];
+        }
+        $new_list[$event_idx] = $ts;
+        $packet_info[$packet_idx] = [ @new_list ];
+        $packet_info_idx[$packet_idx] = $event_idx+1;
+        if ($packet_info_idx[$packet_idx] == 7) {
+            # 000003.720093: p1 departs from S1, time in S1 = 2003.147ms, time in system = 2003.514ms
+            $k = index($desc, "departs from S");
+            if ($k == (-1)) {
+                print STDERR "Warning: cannot 'departs from S' substring in the event description in the 7th event of p$packet_number\n";
+            } else {
+                $desc = substr($desc, $k);
+                $desc = substr($desc, length("departs from S"));
+                ($sender_number, $junk) = split(",", $desc);
+                $sender_idx = $sender_number - 1;
+                $packet_transmitted_by_sender[$packet_idx] = $sender_idx;
+            }
+        }
+    } else {
+        # skip
+    }
+}
+close FILE;
+
+if ($debug) {
+    print "\n==== Timestamp Data Structures / Lists ====\n";
+}
+for ($i = 0; $i < $num_packets; $i++) {
+    $packet_number = $i + 1;
+    $event_idx = $packet_info_idx[$i];
+    if ($debug) {
+        print "p$packet_number: ($event_idx)";
+        for ($k = 0; $k < $event_idx; $k++) {
+            print " $packet_info[$i][$k]";
+        }
+        print "\n";
+    }
+}
+
+print "\n==== Packets ====\n";
+for ($i = 0; $i < $num_packets; $i++) {
+    $packet_number = $i + 1;
+    $event_idx = $packet_info_idx[$i];
+    if ($event_idx == 7) {
+        if ($packet_number == 1) {
+            $elapsed_time = &TimeStampDiffInMS("0.0", $packet_info[$i][0]);
+            $neg_res = &NegativeTimeStampDiff("0.0", $packet_info[$i][0]);
+        } else {
+            $elapsed_time = &TimeStampDiffInMS($packet_info[$i-1][0], $packet_info[$i][0]);
+            $neg_res = &NegativeTimeStampDiff($packet_info[$i-1][0], $packet_info[$i][0]);
+        }
+        print "p$packet_number: inter-arrival time should be $elapsed_time\n";
+        if ($neg_res) {
+            print STDERR "p$packet_number: inter-arrival time should be $elapsed_time\n";
+        }
+
+        $elapsed_time = &TimeStampDiffInMS($packet_info[$i][1], $packet_info[$i][2]);
+        $neg_res = &NegativeTimeStampDiff($packet_info[$i][1], $packet_info[$i][2]);
+        print "    time in Q1 should be $elapsed_time\n";
+        if ($neg_res) {
+            print STDERR "    time in Q1 should be $elapsed_time\n";
+        }
+
+        $elapsed_time = &TimeStampDiffInMS($packet_info[$i][3], $packet_info[$i][4]);
+        $neg_res = &NegativeTimeStampDiff($packet_info[$i][3], $packet_info[$i][4]);
+        print "    time in Q2 should be $elapsed_time\n";
+        if ($neg_res) {
+            print STDERR "    time in Q2 should be $elapsed_time\n";
+        }
+
+        if ($trace_driven) {
+            ($iat, $tokens, $st) = split(" ", $packet[$i]);
+            $elapsed_time = &ServiceTimeToMS($st);
+        } else {
+            $st = 1000.0 / $mu;
+            $elapsed_time = &ServiceTimeToMS(&MyRound($st));
+        }
+        print "    should request $elapsed_time of service time\n";
+        if ($st < 0) {
+            print STDERR "    should request $elapsed_time of service time\n";
+        }
+
+        $sender_number = $packet_transmitted_by_sender[$i]+1;
+        $elapsed_time = &TimeStampDiffInMS($packet_info[$i][5], $packet_info[$i][6]);
+        $neg_res = &NegativeTimeStampDiff($packet_info[$i][5], $packet_info[$i][6]);
+        print "    time in S$sender_number should be $elapsed_time\n";
+        if ($neg_res) {
+            print STDERR "    time in S$sender_number should be $elapsed_time\n";
+        }
+
+        $elapsed_time = &TimeStampDiffInMS($packet_info[$i][0], $packet_info[$i][6]);
+        $neg_res = &NegativeTimeStampDiff($packet_info[$i][0], $packet_info[$i][6]);
+        print "    time in system should be $elapsed_time\n";
+        if ($neg_res) {
+            print STDERR "    time in system should be $elapsed_time\n";
+        }
+    } elsif ($event_idx == 1) {
+        # dropped
+        if ($packet_number == 1) {
+            $elapsed_time = &TimeStampDiffInMS("0.0", $packet_info[$i][0]);
+            $neg_res = &NegativeTimeStampDiff("0.0", $packet_info[$i][0]);
+        } else {
+            $elapsed_time = &TimeStampDiffInMS($packet_info[$i-1][0], $packet_info[$i][0]);
+            $neg_res = &NegativeTimeStampDiff($packet_info[$i-1][0], $packet_info[$i][0]);
+        }
+        print "p$packet_number: inter-arrival time should be $elapsed_time\n";
+        if ($neg_res) {
+            print STDERR "p$packet_number: inter-arrival time should be $elapsed_time\n";
+        }
+    } elsif ($event_idx > 0) {
+        print STDERR "Incorrect number of events for p$packet_number: $event_idx\n";
+    }
+    print "\n";
+}
+
+print "==== Statistics ====\n";
+$total_iat_stat = 0.0;
+$num_iat_stat = 0;
+
+$total_time_in_q1_stat = 0.0;
+$num_time_in_q1_stat = 0;
+
+$total_time_in_q2_stat = 0.0;
+$num_time_in_q2_stat = 0;
+
+$total_time_in_senders_stat = 0.0;
+$num_time_in_senders_stat = 0;
+
+$total_time_in_system_stat = 0.0;
+$total_time_in_system_squared_stat = 0.0;
+$num_time_in_system_stat = 0;
+
+$num_dropped = 0;
+$num_arrived = 0;
+
+@total_time_in_sender_m_stat = ( );
+@num_time_in_sender_m_stat = ( );
+for ($i=0; $i < $M; $i++) {
+    $total_time_in_sender_m_stat[$i] = 0.0;
+    $num_time_in_sender_m_stat[$i] = 0;
+}
+
+$total_emulation_time = &TimeStampDiffInDouble("0.0", $emulation_end_time);
+for ($i = 0; $i < $num_packets; $i++) {
+    $packet_number = $i + 1;
+    $event_idx = $packet_info_idx[$i];
+    if ($event_idx == 7) {
+        if ($packet_number == 1) {
+            $dval = &TimeStampDiffInDouble("0.0", $packet_info[$i][0]);
+        } else {
+            $dval = &TimeStampDiffInDouble($packet_info[$i-1][0], $packet_info[$i][0]);
+        }
+        $total_iat_stat = $total_iat_stat + $dval;
+        $num_iat_stat++;
+
+        $dval = &TimeStampDiffInDouble($packet_info[$i][1], $packet_info[$i][2]);
+        $total_time_in_q1_stat = $total_time_in_q1_stat + $dval;
+        $num_time_in_q1_stat++;
+
+        $dval = &TimeStampDiffInDouble($packet_info[$i][3], $packet_info[$i][4]);
+        $total_time_in_q2_stat = $total_time_in_q2_stat + $dval;
+        $num_time_in_q2_stat++;
+
+        ($iat, $tokens, $dval) = split(" ", $packet[$i]);
+
+        $sender_idx = $packet_transmitted_by_sender[$i];
+        $dval = &TimeStampDiffInDouble($packet_info[$i][5], $packet_info[$i][6]);
+        $total_time_in_senders_stat = $total_time_in_senders_stat + $dval;
+        $num_time_in_senders_stat++;
+        $total_time_in_sender_m_stat[$sender_idx] = $total_time_in_sender_m_stat[$sender_idx] + $dval;
+        $num_time_in_sender_m_stat[$sender_idx]++;
+
+        $dval = &TimeStampDiffInDouble($packet_info[$i][0], $packet_info[$i][6]);
+        $total_time_in_system_stat = $total_time_in_system_stat + $dval;
+        $total_time_in_system_squared_stat = $total_time_in_system_squared_stat + ($dval * $dval);
+        $num_time_in_system_stat++;
+
+        $num_arrived++;
+    } elsif ($event_idx == 1) {
+        # dropped
+        if ($packet_number == 1) {
+            $dval = &TimeStampDiffInDouble("0.0", $packet_info[$i][0]);
+        } else {
+            $dval = &TimeStampDiffInDouble($packet_info[$i-1][0], $packet_info[$i][0]);
+        }
+        $total_iat_stat = $total_iat_stat + $dval;
+        $num_iat_stat++;
+
+        $num_dropped++;
+        $num_arrived++;
+    } elsif ($event_idx > 0) {
+        # removed
+        if ($packet_number == 1) {
+            $dval = &TimeStampDiffInDouble("0.0", $packet_info[$i][0]);
+        } else {
+            $dval = &TimeStampDiffInDouble($packet_info[$i-1][0], $packet_info[$i][0]);
+        }
+        $total_iat_stat = $total_iat_stat + $dval;
+        $num_iat_stat++;
+
+        $num_arrived++;
+        print STDERR "ERROR: Incorrect number of events for p$packet_number: $event_idx.  Calculations below may be wrong!\n";
+    }
+}
+
+if ($num_iat_stat > 0) {
+    $dval = $total_iat_stat / $num_iat_stat;
+    print "average packet inter-arrival time = $dval\n";
+    if ($dval < 0) {
+        print STDERR "average packet inter-arrival time = $dval\n";
+    }
+} else {
+    print "average packet inter-arrival time = (N/A, no packet arrived)\n";
+}
+if ($num_time_in_senders_stat > 0) {
+    $dval = $total_time_in_senders_stat / $num_time_in_senders_stat;
+    print "average packet service time = $dval\n";
+    if ($dval < 0) {
+        print STDERR "average packet service time = $dval\n";
+    }
+} else {
+    print "average packet service time = (N/A, no packet served)\n";
+}
+
+$dval = $total_time_in_q1_stat / $total_emulation_time;
+print "average number of packets in Q1 = $dval\n";
+if ($dval < 0) {
+    print STDERR "average number of packets in Q1 = $dval\n";
+}
+
+$dval = $total_time_in_q2_stat / $total_emulation_time;
+print "average number of packets in Q2 = $dval\n";
+if ($dval < 0) {
+    print STDERR "average number of packets in Q2 = $dval\n";
+}
+
+for ($i=0; $i < $M; $i++) {
+    $dval = $total_time_in_sender_m_stat[$i] / $total_emulation_time;
+    $sender_number = $i+1;
+    print "average number of packets in S$sender_number = $dval\n";
+    if ($dval < 0) {
+        print STDERR "average number of packets in S$sender_number = $dval\n";
+    }
+}
+
+if ($num_time_in_system_stat > 0) {
+    $dval = $total_time_in_system_stat / $num_time_in_system_stat;
+    print "average time a packet spent in system = $dval\n";
+    if ($dval < 0) {
+        print STDERR "average time a packet spent in system = $dval\n";
+    }
+
+    $dval2 = $total_time_in_system_squared_stat / $num_time_in_system_stat;
+    $dval = $dval2 - ($dval * $dval);
+    if ($dval < 0) {
+        $s = sprintf("%.3f", $dval);
+        print STDERR "Warning: negative variance: $s\n";
+        $dval = sqrt(-$dval);
+    } else {
+        $dval = sqrt($dval);
+    }
+    print "standard deviation for time spent in system = $dval\n";
+    if ($dval < 0) {
+        print STDERR "standard deviation for time spent in system = $dval\n";
+    }
+} else {
+    print "average time a packet spent in system = (N/A, no packet served)\n";
+    print "standard deviation for time spent in system = (N/A, no packet served)\n";
+}
+
+
+if ($token_dropped+$token_not_dropped == 0) {
+    print "token drop probability = N/A (no token has arrived)\n";
+} else {
+    $dval = (1.0 * $token_dropped) / (1.0 * ($token_dropped+$token_not_dropped));
+    print "token drop probability = $dval\n";
+    if ($dval > 1) {
+        print STDERR "token drop probability = $dval\n";
+    }
+}
+
+if ($num_arrived == 0) {
+    print "packet drop probability = N/A (no packet has arrived)\n";
+} else {
+    $dval = (1.0 * $num_dropped) / (1.0 * $num_arrived);
+    print "packet drop probability = $dval\n";
+    if ($dval > 1) {
+        print STDERR "packet drop probability = $dval\n";
+    }
+}

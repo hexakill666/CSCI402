@@ -1,0 +1,273 @@
+Guideline for Warmup #1
+=======================
+
+Total points: 100
+
++---------------------+
+| General Guidelines: |
++---------------------+
+
+1)  The points below are maximum points.  Partial credits may be given, if
+    appropriate.
+
+2)  Grade what's in the "plus points" section first, then grade the "minus
+    points" to deduct points.
+
+3)  Please read the student's README first to see if you need to do something
+    different to get their code to work and what the known problems are.  The
+    grader must not modify ANY source code and the grader can only grade on a
+    32-bit standard Ubuntu 16.04 system.
+
+4)  The scripts below are for csh/tcsh.  If you use bash, please modify them
+    where necessary.  Or, you can do "tcsh" and then run the scripts.
+
+5)  The grading is meant to be harsh!  In the "plus points" section, if running
+    the "diff" command is suppose to produce no output, but the "diff" command
+    produces some output, most likely, no corresponding plus points will be earned.
+    Again, we cannot grade base of "effort".  Similarly, if running the "diff"
+    command suppose to produce some output, but the "diff" command produces no
+    output or in the wrong format, most likely, no corresponding plus points will
+    be earned.
+
+6)  Unless otherwise specified, the minimum deduction for a mistake of any kind
+    is 0.5 pt (unless you have lost all the points allocated for a particular
+    test/subtest) even if all are caused by the same programming bug.  If a range
+    is specified (e.g., -5 to -10 pts), it means that if such an error occured,
+    even just once, the minimum will be deducted.  From that point on, each
+    additional occurrence will incur a 0.5 pt deduction.
+
+7)  The posted grading guidelines is not perfect.  We will try our best to stick
+    to the grading guidelines.  Sometimes, after we started grading some of the
+    submissions, we realize that we missed something (most often in "minus
+    points").  The bottomline is that we reserve the right to add or change
+    things in the grading guidelines as we see fit (or take additiona deductions
+    if you don't follow the spec).  By default, if the spec says that you are
+    required to implement something, even though it's not explicitly mentioned in
+    the grading guidelines, you must follow the spec.  Please don't assume that
+    it's fine not to follow the spec.  If you are not sure about something, it's
+    best to send an e-mail to the instructor for clarification.
+
+8)  The grader will grade using a different set of "data" (we will try our best
+    not to change the structure of the script).  Any numerical value, commandline
+    argument, or filename is also considered "data".  All these may be changed.
+    So, you need to make sure that your code can handle any input (good and bad).
+
++----------------+
+| Do this first: |
++----------------+
+
+    [ download "w1data.tar.gz" from spec ]
+    gunzip -c w1data.tar.gz | tar xvf -
+    /bin/rm -f section-A.csh section-B.csh do-this-first.csh
+    /bin/cp w1data/scripts/section-A.csh .
+    /bin/cp w1data/scripts/section-B.csh .
+    /bin/cp w1data/scripts/do-this-first.csh .
+
+    [ the following is equivalent to running "./do-this-first.csh" ]
+    if (-f my402list.h) then
+        mv my402list.h my402list.h.submitted
+    endif
+    if (-f cs402.h) then
+        mv cs402.h cs402.h.submitted
+    endif
+    /bin/cp w1data/cs402.h .
+    /bin/cp w1data/my402list.h .
+    make warmup1
+
++--------------+
+| Plus points: |
++--------------+
+
+(A) Doubly-linked Circular List : +40 points
+
+                [ the following is equivalent to running "./section-A.csh" ]
+
+                /bin/rm -rf grading_$$
+                mkdir grading_$$
+                cd grading_$$
+                cp ../my402list.c .
+                cp ../w1data/cs402.h .
+                cp ../w1data/my402list.h .
+                cp ../w1data/listtest.c .
+                cp ../w1data/Makefile .
+                make
+
+                #
+                # these values will be changed for grading
+                #
+                set seeds = ( 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 )
+
+                #
+                # for the following commands, each correct behavior gets 2 point
+                # gets 2 points if "./listtest" command produces NOTHING
+                # gets 0 point if "./listtest" command produces ANY output
+                #
+                foreach f (0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19)
+                    @ index = $f + 1
+                    echo "===> test_$f"
+                    ./listtest -seed=$seeds[$index]
+                end
+                cd ..
+
+                #
+                # Clean up temporary directory
+                #
+                /bin/rm -rf grading_$$
+
+(B) Sort : +60 points
+
+                [ the following is equivalent to running "./section-B.csh" ]
+
+                #
+                # (B1)
+                # for the following commands, each case is worth 2 points
+                # gets 2 points if "diff" command produces NOTHING
+                # gets 1 point if "diff" command produces SOME output showing
+                #     very minor formatting errors (i.e., extra or missing space/tab/cr characters)
+                # gets 0.5 point if "diff" command produces SOME output showing
+                #     minor formatting errors (i.e., numbers are formatted incorrectly
+                #     such as missing or misplaced commas/period)
+                # gets 0 point if "diff" command produce SOME output showing
+                #     incorrect information in the output
+                #
+                /bin/rm -f f?.sort f??.sort
+                foreach f (0 1 2 3 4 5 6 7 8 9 10 11 12 13 14)
+                    echo "===> w1data/f$f"
+                    ./warmup1 sort w1data/f$f > f$f.sort
+                    diff w1data/f$f.sort f$f.sort
+                end
+                /bin/rm -f f?.sort f??.sort
+
+                #
+                # (B2)
+                # for the following commands, each case is worth 2 points
+                # gets 2 points if "diff" command produces NOTHING
+                # gets 1 point if "diff" command produces SOME output showing
+                #     very minor formatting errors (i.e., extra or missing space/tab/cr characters)
+                # gets 0.5 point if "diff" command produces SOME output showing
+                #     minor formatting errors (i.e., numbers are formatted incorrectly
+                #     such as missing or misplaced commas/period)
+                # gets 0 point if "diff" command produce SOME output showing
+                #     incorrect information in the output
+                #
+                /bin/rm -f f?.sort f??.sort
+                foreach f (15 16 17 18 19 20 21 22 23 24 25 26 27 28 29)
+                    echo "===> w1data/f$f"
+                    cat w1data/f$f | ./warmup1 sort > f$f.sort
+                    diff w1data/f$f.sort f$f.sort
+                end
+                /bin/rm -f f?.sort f??.sort
+
++---------------+
+| Minus points: |
++---------------+
+
+Missing/incomplete required section(s) in README file : -5 points (even if lots of comments in code)
+
+Submission in wrong file format : -2 points
+
+Submitted binary file : -2 points each
+
+Cannot compile : -5 to -10, depending on effort to make it work
+                # if cannot generate executable, at least 5 points
+                #     will be taken off, up to 10 points off if it
+                #     takes a lot to make it work
+
+Compiler warnings : -1 to -3
+                # if using gcc/g++, make sure -Wall flag is used
+                #     take 1 point off for 1-4 warnings,
+                # 2 points off for 5-8 warnings, 3 points for more
+
+"make clean" : -2 points if cannot delete all binary files created during compilation
+               (.o files, .gch files, executable files, etc.)
+
+Segmentation faults : -5 to -10 points
+                # if you have seen that the student's program gets segmentation
+                #     faults or bus errors any time during your testing of
+                #     the code, deduct 5 points, any additional occurrance,
+                #     deduct 0.5 pt each
+
+Program never terminates : -5 to -10 points
+                # if you have seen that the student's program won't terminates any
+                #     time during your testing of the code, deduct 5 points,
+                #     any additional occurrance, deduct 0.5 pt each
+
+Separate compilation : -10 points
+                # if the executable is compiled with a single line, deduct
+                #     all 10 points
+                # if the source of the executable is a single module, but generates warmup1.o and
+                #     then link to create the executable in line one, deduct 5
+                #     points
+                # if a lot of the code are in .h files, deduct all 10 points
+                # if no Makefile is included in the submission, deduct all 10 points
+
+Malformed input : -2 point each for each not handling properly
+                # must print a reasonable error message and quit, just saying that
+                #     there's something wrong with the input is not reasonable,
+                #     you must give a line number and a field name if applicable
+                cat w1data/f101 | ./warmup1 sort
+                cat w1data/f102 | ./warmup1 sort
+                cat w1data/f103 | ./warmup1 sort
+                cat w1data/f104 | ./warmup1 sort
+                cat w1data/f105 | ./warmup1 sort
+                cat w1data/f106 | ./warmup1 sort
+                cat w1data/f107 | ./warmup1 sort
+
+Too slow : -5 points for running way too slow
+                # if correct results are produced but just run too slowly,
+                #     take points off according the slowest run of the
+                #     program (i.e., worst case)
+                # if it takes 15 seconds or more to run, take 1 point off
+                # if it takes 30 seconds or more to run, take 2 points off
+                # if it takes 45 seconds or more to run, take 3 points off
+                # if it takes 1 minute or more to run, take 4 points off
+                # if it takes 2 minute or more to run, take 5 points off
+
+Bad commandline or command or input : -1 point each for each not handling properly
+                # need some sort of error output to indicate that the command
+                #     cannot be completed, it does not have to be exactly the
+                #     error indicated below, but it MUST BE something reasonable
+                #     to inform the user about the error condition
+                # if the input is bad, you must give a file name, a line number,
+                #     and a field name if applicable
+                # if you print that a commandline is malformed, MUST say which
+                #     argument you think is wrong AND give "usage" information
+                #     as described in the spec
+                # please note that commandline parsing is separate from
+                #     other functionalities, so even though a student has
+                #     declared that certain part of the assignments is not
+                #     implemented, commandline parsing still needs to be done
+                #     for those commands
+
+                ./warmup1
+                    (malformed command)
+                ./warmup1 -y sort
+                    (malformed command, "-y" is not a valid commandline option)
+                ./warmup1 xyz
+                    (malformed command, "xyz" is not a valid commandline option)
+                ./warmup1 abc def ghi
+                    (malformed command, "abc" is not a valid commandline option)
+                ./warmup1 ksjdfjwiejofjasdfjowkejokjaosijfioejfsiejriwjeirjwier
+                    (malformed command, "ksjdfjwiejofjasdfjowkejokjaosijfioejfsiejriwjeirjwier" is not a valid commandline option)
+
+                ./warmup1 sort -x
+                    (malformed command or input file "-x" does not exist)
+                ./warmup1 sort /usr/bin/xyzz
+                    (input file /usr/bin/xyzz does not exist)
+                ./warmup1 sort /var/log/btmp
+                    (input file /var/log/btmp cannot be opened - access denies)
+                ./warmup1 sort /root/.bashrc
+                    (input file /root/.bashrc cannot be opened - access denies)
+                ./warmup1 sort /etc
+                    (input file /etc is a directory or input file is not in the right format)
+                ./warmup1 sort /etc/lsb-release
+                    (input file is not in the right format)
+                ./warmup1 sort Makefile
+                    (input file is not in the right format)
+
+Did not use My402List and My402ListElem to implement "sort" in (B) : -30 points
+                #
+                # inspect student's code to see if another list implementation
+                # is used or an array is used to sort the list (e.g., using qsort())
+                #
+
